@@ -17,7 +17,7 @@ public class Alarm {
 
         if (pulse.getLatest() > limits.getLowerPulse() && pulse.getLatest() < limits.getUpperPulse()) {
             return false;
-        } else if (oxygen.getLatest() > limits.getLowerSpO2() && oxygen.getLatest() < limits.getUpperSpO2()) {
+        } else if (oxygen.getLatest() > limits.getLowerSp02() && oxygen.getLatest() < limits.getUpperSp02()) {
             return false;
         } else {
             return true;

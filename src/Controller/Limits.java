@@ -5,25 +5,39 @@ public class Limits {
     private static short upperPulse;
     private static short lowerPulse;
     private static short upperSp02;
-    private static short lowerSP02;
+    private static short lowerSp02;
     private int age;
 
-    public void setAge(int age) {
+    public void setAge(int ageOfUser) {
+        age = ageOfUser;
     }
 
-    public static short getUpperPulse() {
+    public short getUpperPulse() {
+        if (age >= 18) {
+            upperPulse = 80;
+        } else {
+            upperPulse = 100;
+        }
         return upperPulse;
     }
 
-    public static short getLowerPulse() {
+    public short getLowerPulse() {
+        if (age >= 18) {
+            lowerPulse = 100;
+        } else {
+            lowerPulse = 80;
+        }
         return lowerPulse;
     }
 
-    public static short getUpperSp02() {
+    public short getUpperSp02() {
+        upperSp02 = 100;
         return upperSp02;
     }
 
-    public static short getLowerSP02() {
-        return lowerSP02;
+    public short getLowerSp02() {
+        lowerSp02 = 90;
+        return lowerSp02;
     }
+
 }
