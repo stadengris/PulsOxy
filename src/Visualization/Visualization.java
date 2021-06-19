@@ -5,6 +5,8 @@ import Controller.Alarm;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Visualization {
     private JPanel mainPanel;
@@ -14,15 +16,19 @@ public class Visualization {
     private JTextField tfAge;
     private Controller.Alarm alarm;
     private int age;
+    private Timer timer;
 
     public Visualization() {
 
         alarm = new Alarm();
         age = -1;
+        timer = new Timer();
 
         bPause.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                alarm.setPaused(true);
+                pauseAlarm();
                 JOptionPane.showMessageDialog(null, "The alarm is paused for 5 min.");
             }
         });
@@ -62,6 +68,30 @@ public class Visualization {
             return false;
         }
         return true;
+    }
+
+    public void triggerAlarm(){
+        if (alarm.isPulseExceeded()){
+            //TODO: Label Pulse Limits aufleuchten!
+        }
+        if (alarm.isSpO2Exceeded()){
+            //TODO: Label Pulse Limits aufleuchten!
+        }
+    }
+
+    public void pauseAlarm(){
+        if (alarm.isPaused() && !alarm.isDeactivated()){
+            alarm.setPaused(true);
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    alarm.setPaused(false);
+                    JOptionPane.showMessageDialog(null, "Alarm is activated again.");
+                }
+            };
+            long delay = 300000L; // 5 min = 300000 millisec
+            timer.schedule(task, delay);
+        }
     }
 
     public static void main(String[] args){

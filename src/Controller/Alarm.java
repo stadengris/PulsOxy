@@ -15,7 +15,6 @@ public class Alarm {
 
     public Alarm (){
         this.paused = false;
-        this.alarm = false;
         this.deactivated = false;
         this.pulse = new Pulse();
         this.oxygen = new SpO2();
@@ -23,11 +22,18 @@ public class Alarm {
     }
 
 
-    public boolean isExceeded() { // The last value of SpO2 & pulse will be compared with the limits to check if they will be exceeded
+    public boolean isPulseExceeded() { // The last value of pulse will be compared with the limits to check if they will be exceeded
 
         if (pulse.getLatest() > limits.getLowerPulse() && pulse.getLatest() < limits.getUpperPulse()) {
             return false;
-        } else if (oxygen.getLatest() > limits.getLowerSpO2() && oxygen.getLatest() < limits.getUpperSpO2()) {
+        } else {
+            return true;
+        }
+    }
+
+    public boolean isSpO2Exceeded() { // The last value of SpO2 will be compared with the limits to check if they will be exceeded
+
+        if (oxygen.getLatest() > limits.getLowerSpO2() && oxygen.getLatest() < limits.getUpperSpO2()) {
             return false;
         } else {
             return true;
@@ -56,10 +62,6 @@ public class Alarm {
 
     public void setDeactivated(boolean paused) {
         this.deactivated = deactivated;
-    }
-
-    public boolean isAlarm() {
-        return alarm;
     }
 
     public void setAlarm(boolean paused) {
