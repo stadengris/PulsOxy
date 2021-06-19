@@ -6,12 +6,22 @@ import SignalProcessing.SpO2;
 
 public class Alarm {
 
-    private boolean pause;
+    private boolean paused;
     private boolean alarm;
-    private boolean deactivate;
+    private boolean deactivated;
     private Pulse pulse;
     private SpO2 oxygen;
     private Limits limits;
+
+    public Alarm (){
+        this.paused = false;
+        this.alarm = false;
+        this.deactivated = false;
+        this.pulse = new Pulse();
+        this.oxygen = new SpO2();
+        this.limits = new Limits();
+    }
+
 
     public boolean isExceeded() { // The last value of SpO2 & pulse will be compared with the limits to check if they will be exceeded
 
@@ -24,8 +34,37 @@ public class Alarm {
         }
     }
 
-    public void triggerAlarm(){
-
+    public void deactivate(){
+        this.deactivated = true;
     }
 
+    public void activate(){
+        this.deactivated = false;
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    public boolean isDeactivated() {
+        return deactivated;
+    }
+
+    public void setDeactivated(boolean paused) {
+        this.deactivated = deactivated;
+    }
+
+    public boolean isAlarm() {
+        return alarm;
+    }
+
+    public void setAlarm(boolean paused) {
+        this.alarm = alarm;
+    }
+
+    public Limits getLimits(){return limits;}
 }

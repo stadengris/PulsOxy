@@ -1,22 +1,27 @@
 package SignalProcessing;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SpO2 implements Signal{
-    private List<Short> SpO2Data;
+    private List<Short> oxygenData;
+
+    public SpO2(){
+        this.oxygenData = new ArrayList<Short>();
+    }
 
     @Override
     public List<Short> getData() {
-        return SpO2Data;
+        return oxygenData;
     }
 
     @Override
     public void append(Short d) {
-        this.SpO2Data.add(d);
+        this.oxygenData.add(d);
     }
 
     @Override
     public Short getLatest() {
-        return this.SpO2Data.get(this.SpO2Data.size()-1);
+        return this.oxygenData.get(this.oxygenData.size()-1);
     }
 }
