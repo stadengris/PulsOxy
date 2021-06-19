@@ -71,10 +71,10 @@ public class Visualization {
     }
 
     public void triggerAlarm(){
-        if (alarm.isPulseExceeded()){
+        if (alarm.isPulseExceeded() && (!alarm.isDeactivated() || !alarm.isPaused())){
             //TODO: Label Pulse Limits aufleuchten!
         }
-        if (alarm.isSpO2Exceeded()){
+        if (alarm.isSpO2Exceeded() && (!alarm.isDeactivated() || !alarm.isPaused())){
             //TODO: Label Pulse Limits aufleuchten!
         }
     }
