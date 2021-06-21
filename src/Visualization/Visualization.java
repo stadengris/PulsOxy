@@ -1,10 +1,13 @@
 package Visualization;
 
 import Controller.Alarm;
+import Controller.Limits;
+import SignalProcessing.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -14,9 +17,17 @@ public class Visualization {
     private JButton bDeactivate;
     private JButton bSave;
     private JTextField tfAge;
+    private JLabel upperLimitPulse;
+    private JLabel upperLimitSpo2;
+    private JLabel lowerLimitPulse;
+    private JLabel lowerLimitSpo2;
+    private JLabel valuePulse;
+    private JLabel valueSpo2;
     private Controller.Alarm alarm;
     private int age;
     private Timer timer;
+    private Pulse pulse;
+    private SpO2 spO2;
 
     public Visualization() {
 
@@ -55,6 +66,12 @@ public class Visualization {
                 if (!isAgeSet()){
                     age = Integer.parseInt(tfAge.getText());
                     alarm.getLimits().initializeLimits(age);
+                    upperLimitPulse.setText(Short.toString(Limits.getUpperPulse()));
+                    upperLimitSpo2.setText(Short.toString(Limits.getUpperSpO2()));
+                    lowerLimitPulse.setText(Short.toString(Limits.getLowerPulse()));
+                    lowerLimitSpo2.setText(Short.toString(Limits.getLowerSpO2()));
+                    valuePulse.setText(Short.toString(pulse.getLatest()));
+                    valueSpo2.setText(Short.toString(spO2.getLatest()));
                 } else{
                     tfAge.setText(Integer.toString(age));
                     JOptionPane.showMessageDialog(null, "The age is already specified.");
@@ -101,4 +118,5 @@ public class Visualization {
         frame.pack();
         frame.setVisible(true);
     }
+
 }

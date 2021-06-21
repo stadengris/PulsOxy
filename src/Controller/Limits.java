@@ -4,15 +4,8 @@ public class Limits {
 
     private static short upperPulse;
     private static short lowerPulse;
-    private static short upperSpO2;
-    private static short lowerSpO2;
-
-    public Limits(){
-        this.upperPulse = -1;
-        this.lowerPulse = -1;
-        this.upperSpO2 = -1;
-        this.lowerSpO2 = -1;
-    }
+    private static short upperSp02;
+    private static short lowerSp02;
 
     public static short getUpperPulse() {
         return upperPulse;
@@ -23,10 +16,12 @@ public class Limits {
     }
 
     public static short getUpperSpO2() {
-        return upperSpO2;
+        return upperSp02;
     }
 
-    public static short getLowerSpO2() {return lowerSpO2; }
+    public static short getLowerSpO2() {
+        return lowerSp02;
+    }
 
     public void initializeLimits(int age) {
         if (age >= 18) {
@@ -36,7 +31,7 @@ public class Limits {
             upperPulse = 100;
             lowerPulse = 80;
         }
-        upperSpO2 = 100;
-        lowerSpO2 = 90;
+        upperSp02 = 100;
+        lowerSp02 = 90;
     }
 }
