@@ -2,12 +2,13 @@ package Visualization;
 
 import Controller.Alarm;
 import Controller.Limits;
-import SignalProcessing.*;
+import Data.StoreData;
+import SignalProcessing.Pulse;
+import SignalProcessing.SpO2;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -87,6 +88,10 @@ public class Visualization {
         return true;
     }
 
+    public int getAge(){
+        return age;
+    }
+
     public void triggerAlarm(){
         if (alarm.isPulseExceeded() && (!alarm.isDeactivated() || !alarm.isPaused())){
             //TODO: Label Pulse Limits aufleuchten!
@@ -117,6 +122,8 @@ public class Visualization {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
+        StoreData data = new StoreData(); // you will find a text file in your project folder if you run the main method; it will be empty beacuse we still have no input data
+        data.WriteOutputData();
     }
 
 }
