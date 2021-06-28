@@ -48,7 +48,7 @@ public class Visualization {
         bDeactivate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!alarm.isDeactivated()){
+                if (!alarm.isDeactivated()) {
                     bDeactivate.setText("Activate Alarm");
                     JOptionPane.showMessageDialog(null, "The alarm is deactivated. \n Click Activate Alarm for activating.");
                     alarm.deactivate();
@@ -64,7 +64,7 @@ public class Visualization {
         tfAge.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!isAgeSet()){
+                if (!isAgeSet()) {
                     age = Integer.parseInt(tfAge.getText());
                     alarm.getLimits().initializeLimits(age);
                     upperLimitPulse.setText(Short.toString(Limits.getUpperPulse()));
@@ -73,7 +73,7 @@ public class Visualization {
                     lowerLimitSpo2.setText(Short.toString(Limits.getLowerSpO2()));
                     valuePulse.setText(Short.toString(pulse.getLatest()));
                     valueSpo2.setText(Short.toString(spO2.getLatest()));
-                } else{
+                } else {
                     tfAge.setText(Integer.toString(age));
                     JOptionPane.showMessageDialog(null, "The age is already specified.");
                 }
@@ -81,28 +81,28 @@ public class Visualization {
         });
     }
 
-    public boolean isAgeSet(){
-        if (age == -1){
+    public boolean isAgeSet() {
+        if (age == -1) {
             return false;
         }
         return true;
     }
 
-    public int getAge(){
+    public int getAge() {
         return age;
     }
 
-    public void triggerAlarm(){
-        if (alarm.isPulseExceeded() && (!alarm.isDeactivated() || !alarm.isPaused())){
+    public void triggerAlarm() {
+        if (alarm.isPulseExceeded() && (!alarm.isDeactivated() || !alarm.isPaused())) {
             //TODO: Label Pulse Limits aufleuchten!
         }
-        if (alarm.isSpO2Exceeded() && (!alarm.isDeactivated() || !alarm.isPaused())){
+        if (alarm.isSpO2Exceeded() && (!alarm.isDeactivated() || !alarm.isPaused())) {
             //TODO: Label Pulse Limits aufleuchten!
         }
     }
 
-    public void pauseAlarm(){
-        if (alarm.isPaused() && !alarm.isDeactivated()){
+    public void pauseAlarm() {
+        if (alarm.isPaused() && !alarm.isDeactivated()) {
             alarm.setPaused(true);
             TimerTask task = new TimerTask() {
                 @Override
@@ -116,7 +116,7 @@ public class Visualization {
         }
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         JFrame frame = new JFrame("PulsOxy");
         frame.setContentPane(new Visualization().mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
