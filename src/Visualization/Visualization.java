@@ -122,7 +122,7 @@ public class Visualization {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-        StoreData data = new StoreData(); // you will find a text file in your project folder if you run the main method; it will be empty beacuse we still have no input data
+        StoreData data = new StoreData(); // you will find a text file in your project folder if you run the main method; it will be empty because we still have no input data
         data.WriteOutputData();
     }
 
