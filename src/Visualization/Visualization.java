@@ -167,7 +167,7 @@ public class Visualization {
                     }
                 }
             };
-            long delay = 15000L; // 5 min = 300000 millisec
+            long delay = 300000L; // 5 min = 300000 millisec
             timer.schedule(task, delay);
         }
     }
