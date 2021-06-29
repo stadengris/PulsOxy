@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -32,20 +33,23 @@ public class StoreData {
             PrintWriter writer = new PrintWriter(fw);
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             Date date = new Date();
-            if (alarm.isPulseExceeded()) {
+            List<Short> spo2data = spo2.getData();
+            List<Short> pulsedata = pulse.getData();
+            List<String> datepoints = pulse.getDate();
+            if (alarm.isPulseExceeded(pulse)) {
                 this.pulseAsk = "pulse exceeded!";
             } else {
                 this.pulseAsk = "pulse not exceeded";
             }
-            if (alarm.isSpO2Exceeded()) {
+            if (alarm.isSpO2Exceeded(spo2)) {
                 this.spO2Ask = "SpO2 exceeded!";
             } else {
                 this.spO2Ask = "SpO2 not exceeded";
             }
             for (int i = 0; i < pulse.getData().size(); i++) {
-                writer.println("Age: " + visualization.getAge() + ", " + "Pulse: " + pulse.getData().get(i) +
-                        ", " + "SpO2: " + spo2.getData().get(i) + ", " + pulseAsk + ", " + spO2Ask +
-                        ", " + "time: " + formatter.format(date));
+                writer.println("Age: " + visualization.getAge() + ", " + "Pulse: " + pulsedata.get(i) +
+                        ", " + "SpO2: " + spo2data.get(i) + ", " + pulseAsk + ", " + spO2Ask +
+                        ", " + "time: " + datepoints.get(i));
             }
             writer.close();
             return writer;

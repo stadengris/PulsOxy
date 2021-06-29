@@ -2,13 +2,15 @@ package Visualization;
 
 import Controller.Alarm;
 import Controller.Limits;
-import Data.StoreData;
 import SignalProcessing.Pulse;
 import SignalProcessing.SpO2;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -35,6 +37,8 @@ public class Visualization {
         alarm = new Alarm();
         age = -1;
         timer = new Timer();
+        pulse = new Pulse();
+        spO2 = new SpO2();
 
         bPause.addActionListener(new ActionListener() {
             @Override
@@ -52,6 +56,9 @@ public class Visualization {
                     bDeactivate.setText("Activate Alarm");
                     JOptionPane.showMessageDialog(null, "The alarm is deactivated. \n Click Activate Alarm for activating.");
                     alarm.deactivate();
+                    if (alarm.isPaused()){
+                        alarm.setPaused(false);
+                    }
                 } else {
                     bDeactivate.setText("Deactivate Alarm");
                     JOptionPane.showMessageDialog(null, "The alarm is activated. \n Click Deactivate Alarm for deactivating.");
@@ -71,12 +78,17 @@ public class Visualization {
                     upperLimitSpo2.setText(Short.toString(Limits.getUpperSpO2()));
                     lowerLimitPulse.setText(Short.toString(Limits.getLowerPulse()));
                     lowerLimitSpo2.setText(Short.toString(Limits.getLowerSpO2()));
-                    valuePulse.setText(Short.toString(pulse.getLatest()));
-                    valueSpo2.setText(Short.toString(spO2.getLatest()));
                 } else {
                     tfAge.setText(Integer.toString(age));
                     JOptionPane.showMessageDialog(null, "The age is already specified.");
                 }
+            }
+        });
+
+        bSave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                WriteOutputData();
             }
         });
     }
@@ -93,10 +105,10 @@ public class Visualization {
     }
 
     public void triggerAlarm() {
-        if (alarm.isPulseExceeded() && (!alarm.isDeactivated() || !alarm.isPaused())) {
+        if (alarm.isPulseExceeded(pulse) && (!alarm.isDeactivated() || !alarm.isPaused())) {
             //TODO: Label Pulse Limits aufleuchten!
         }
-        if (alarm.isSpO2Exceeded() && (!alarm.isDeactivated() || !alarm.isPaused())) {
+        if (alarm.isSpO2Exceeded(spO2) && (!alarm.isDeactivated() || !alarm.isPaused())) {
             //TODO: Label Pulse Limits aufleuchten!
         }
     }
@@ -107,8 +119,10 @@ public class Visualization {
             TimerTask task = new TimerTask() {
                 @Override
                 public void run() {
-                    alarm.setPaused(false);
-                    JOptionPane.showMessageDialog(null, "Alarm is activated again.");
+                    if (!alarm.isDeactivated()) {
+                        alarm.setPaused(false);
+                        JOptionPane.showMessageDialog(null, "Alarm is activated again.");
+                    }
                 }
             };
             long delay = 300000L; // 5 min = 300000 millisec
@@ -116,14 +130,101 @@ public class Visualization {
         }
     }
 
+    public PrintWriter WriteOutputData() {
+        try {
+            String FileName = "Output-Data.txt";
+            FileWriter fw = new FileWriter(FileName, true);
+            PrintWriter writer = new PrintWriter(fw);
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            Date date = new Date();
+            //List<Short> spo2data = spO2.getData();
+            //List<Short> pulsedata = pulse.getData();
+            //List<String> datepoints = pulse.getDate();
+            for (int i = 0; i < pulse.getData().size(); i++) {
+                writer.println("Age: " + getAge() + ", " + "Pulse: " + pulse.getData().get(i) +
+                        ", " + "SpO2: " + spO2.getData().get(i) + ", " + pulse.getDiagnosis().get(i) +
+                        ", " + spO2.getDiagnosis().get(i) + ", " + "time: " + pulse.getDate().get(i));
+            }
+            writer.close();
+            return writer;
+        } catch (IOException error) {
+            JOptionPane.showConfirmDialog(null, error);
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
         JFrame frame = new JFrame("PulsOxy");
-        frame.setContentPane(new Visualization().mainPanel);
+        Visualization visu = new Visualization();
+        frame.setContentPane(visu.mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-        StoreData data = new StoreData(); // you will find a text file in your project folder if you run the main method; it will be empty because we still have no input data
-        data.WriteOutputData();
+
+        RandomAccessFile pipe = null;
+        try {
+            pipe = new RandomAccessFile("\\\\.\\pipe\\ble_host_pipe", "r");
+            System.out.println("Connected to sensor provider");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        while(true) {
+            try {
+                String str = pipe.readLine();
+                //System.out.println("Read: " + str);
+                if (str == null)
+                {
+                    continue;
+                }
+                String[] strarray = str.split(" ");
+                short[] data = new short[strarray.length];
+                for(int i=0;i<strarray.length;i++)
+                {
+                    try
+                    {
+                        data[i] = Short.parseShort(strarray[i]);
+                    }
+                    catch(NumberFormatException ex)
+                    {
+                        break;
+                    }
+                }
+
+                if(data.length>=2 && data[1] == 10)
+                {
+                    visu.pulse.append(data[4]);
+                    visu.spO2.append(data[5]);
+
+                    if (visu.alarm.isPulseExceeded(visu.pulse)) {
+                        visu.pulse.appendDiagnosis("pulse exceeded!");
+                    } else {
+                        visu.pulse.appendDiagnosis("pulse not exceeded");
+                    }
+                    if (visu.alarm.isSpO2Exceeded(visu.spO2)) {
+                        visu.spO2.appendDiagnosis("SpO2 exceeded!");
+                    } else {
+                        visu.spO2.appendDiagnosis("SpO2 not exceeded");
+                    }
+                    visu.newData(visu.pulse, visu.spO2);
+                }
+
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private void newData(Pulse pulse, SpO2 spO2) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                valuePulse.setText(Short.toString(pulse.getLatest()));
+                valueSpo2.setText(Short.toString(spO2.getLatest()));
+            }
+        });
     }
 
 }
