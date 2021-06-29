@@ -1,5 +1,7 @@
 package SignalProcessing;
 
+import Controller.Limits;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,19 +25,19 @@ public class SpO2 implements Signal{
     }
 
     @Override
-    public void append(Short d) {
+    public void append(Short d, Limits limits) {
         this.oxygenData.add(d);
         //this.oxygenDate.add(formatter.format(new Date()));
+        if (d >= limits.getLowerSpO2() && d <= limits.getUpperSpO2()) {
+            this.oxygenDiagnosis.add("SpO2 not exceeded!");
+        } else {
+            this.oxygenDiagnosis.add("SpO2 exceeded!");
+        }
     }
 
     @Override
     public Short getLatest() {
         return this.oxygenData.get(this.oxygenData.size()-1);
-    }
-
-    @Override
-    public void appendDiagnosis(String diagnosis){
-        this.oxygenDiagnosis.add(diagnosis);
     }
 
     @Override

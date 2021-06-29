@@ -1,5 +1,7 @@
 package SignalProcessing;
 
+import Controller.Limits;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,19 +25,19 @@ public class Pulse implements Signal{
     }
 
     @Override
-    public void append(Short d) {
+    public void append(Short d, Limits limits) {
         this.pulseData.add(d);
         this.pulseDate.add(formatter.format(new Date()));
+        if (d>= limits.getLowerPulse() && d <= limits.getUpperPulse()) {
+            this.pulseDiagnosis.add("pulse not exceeded!");
+        } else {
+            this.pulseDiagnosis.add("pulse exceeded!");
+        }
     }
 
     @Override
     public Short getLatest() {
         return this.pulseData.get(this.pulseData.size()-1);
-    }
-
-    @Override
-    public void appendDiagnosis(String diagnosis){
-        this.pulseDiagnosis.add(diagnosis);
     }
 
     @Override

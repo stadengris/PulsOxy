@@ -133,15 +133,36 @@ public class Visualization {
     public PrintWriter WriteOutputData() {
         try {
             String FileName = "Output-Data.txt";
+            JFrame parentFrame = new JFrame();
+
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Specify a file to save");
+
+            int userSelection = fileChooser.showSaveDialog(parentFrame);
+
+            if (userSelection == JFileChooser.APPROVE_OPTION) {
+                File fileToSave = fileChooser.getSelectedFile();
+                FileName = fileToSave.getAbsolutePath() + ".txt";
+            }
+
             FileWriter fw = new FileWriter(FileName, true);
             PrintWriter writer = new PrintWriter(fw);
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             Date date = new Date();
+            //String FileName = "Output-Data" + formatter.format(date) +".txt";
             //List<Short> spo2data = spO2.getData();
             //List<Short> pulsedata = pulse.getData();
             //List<String> datepoints = pulse.getDate();
+            writer.println("Age: " + getAge());
+            writer.println("------------------------------------------");
+            writer.println("Limits: ");
+            writer.println("Pulse: Lower: " + alarm.getLimits().getLowerPulse() +
+                    ", Upper: " + alarm.getLimits().getUpperPulse());
+            writer.println("SpO2: Lower: " + alarm.getLimits().getLowerSpO2() +
+                    ", Upper: " + alarm.getLimits().getUpperSpO2());
+            writer.println("------------------------------------------");
             for (int i = 0; i < pulse.getData().size(); i++) {
-                writer.println("Age: " + getAge() + ", " + "Pulse: " + pulse.getData().get(i) +
+                writer.println("Pulse: " + pulse.getData().get(i) +
                         ", " + "SpO2: " + spO2.getData().get(i) + ", " + pulse.getDiagnosis().get(i) +
                         ", " + spO2.getDiagnosis().get(i) + ", " + "time: " + pulse.getDate().get(i));
             }
@@ -192,19 +213,8 @@ public class Visualization {
 
                 if(data.length>=2 && data[1] == 10)
                 {
-                    visu.pulse.append(data[4]);
-                    visu.spO2.append(data[5]);
-
-                    if (visu.alarm.isPulseExceeded(visu.pulse)) {
-                        visu.pulse.appendDiagnosis("pulse exceeded!");
-                    } else {
-                        visu.pulse.appendDiagnosis("pulse not exceeded");
-                    }
-                    if (visu.alarm.isSpO2Exceeded(visu.spO2)) {
-                        visu.spO2.appendDiagnosis("SpO2 exceeded!");
-                    } else {
-                        visu.spO2.appendDiagnosis("SpO2 not exceeded");
-                    }
+                    visu.pulse.append(data[4], visu.alarm.getLimits());
+                    visu.spO2.append(data[5], visu.alarm.getLimits());
                     visu.newData(visu.pulse, visu.spO2);
                 }
 

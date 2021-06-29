@@ -1,11 +1,12 @@
 package SignalProcessing;
 
+import Controller.Limits;
+
 import java.util.List;
 
 public interface Signal {
     List<Short> getData();
-    void append(Short d);
+    void append(Short d, Limits limits);
     Short getLatest();
-    void appendDiagnosis(String diagnosis);
     List<String> getDiagnosis();
 }
