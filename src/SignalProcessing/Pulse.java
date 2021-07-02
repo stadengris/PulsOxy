@@ -7,8 +7,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Pulse stores a recorded pulse data from a pulseoxymeter.
+ */
 public class Pulse implements Signal{
+    /**
+     * A list for storing the transmitted pulse data.
+     */
     private List<Short> pulseData;
+    /**
+     * A list for storing the timepoint of the transmitted data.
+     */
     private List<String> pulseDate;
     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 

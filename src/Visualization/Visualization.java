@@ -16,7 +16,14 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Main class of the PulsOxy Software.
+ * Manages mainly the visualization.
+ */
 public class Visualization {
+    /**
+     * Parameters of the GUI
+     */
     private JPanel mainPanel;
     private JButton bPause;
     private JButton bDeactivate;
@@ -31,10 +38,26 @@ public class Visualization {
     private JLabel alarmPulseMsg;
     private JLabel alarmSpO2Msg;
     private JLabel lisActivated;
-    private Controller.Alarm alarm;
+    /**
+     * Alarm instance for managing alarm.
+     */
+    private Alarm alarm;
+    /**
+     * Integer for the age of the user.
+     * Must be specified by the user before values will be recorded.
+     */
     private int age;
+    /**
+     * Timer for pausing the alarm for 5 minutes.
+     */
     private Timer timer;
+    /**
+     * Pulse instance for storing pulse signal.
+     */
     private Pulse pulse;
+    /**
+     * SpO2 instance for storing SpO2 signal.
+     */
     private SpO2 spO2;
 
     public Visualization() {
@@ -45,7 +68,9 @@ public class Visualization {
         pulse = new Pulse();
         spO2 = new SpO2();
 
-        /* Pausing the alarm */
+        /**
+         * ActionListener for pausing the alarm.
+         */
         bPause.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -62,29 +87,39 @@ public class Visualization {
             }
         });
 
-        /* Deactivating the alarm */
+        /**
+         * ActionListener for decativating / activating the alarm.
+         */
         bDeactivate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!alarm.isDeactivated()) {
-                    bDeactivate.setText("Activate Alarm");
-                    lisActivated.setText("Alarm is deactivated.");
+                    bDeactivate.setText("Activate Alarm"); // change "deactivate" to "activate" on button.
+                    lisActivated.setText("Alarm is deactivated."); // inform that alarm is deactivated
                     valuePulse.setForeground(Color.black);
+
+                    // Hide alarm on GUI.
                     alarmPulseMsg.setForeground(new Color(187,187,187));
                     alarmPulseMsg.setText("");
                     valueSpo2.setForeground(Color.black);
                     alarmSpO2Msg.setForeground(new Color(187,187,187));
                     alarmSpO2Msg.setText("");
+
                     alarm.deactivate();
                     if (alarm.isPaused()){
                         alarm.setPaused(false);
                     }
+
+                    // Notify user.
                     JOptionPane.showMessageDialog(null, "The alarm is deactivated. " +
                             "\n Click Activate Alarm for activating.");
                 } else {
-                    bDeactivate.setText("Deactivate Alarm");
-                    lisActivated.setText("Alarm is activated.");
+                    bDeactivate.setText("Deactivate Alarm"); // change "activate" to "deactivate" on button.
+                    lisActivated.setText("Alarm is activated."); // inform that alarm is activated.
+
                     alarm.activate();
+
+                    // Notify user.
                     JOptionPane.showMessageDialog(null, "The alarm is activated. " +
                             "\n Click Deactivate Alarm for deactivating.");
                 }
@@ -92,10 +127,10 @@ public class Visualization {
             }
         });
 
-        /*
-        Controlling if age is set:
-        Initialize and show the upper / lower limits of pulse and SpO2
-        */
+        /**
+         * ActionListener for controlling if age is set:
+         * Initialize and show the upper / lower limits of pulse and SpO2.
+         */
         tfAge.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -113,6 +148,9 @@ public class Visualization {
             }
         });
 
+        /**
+         * ActionListener for saving the recorded data.
+         */
         bSave.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -121,6 +159,10 @@ public class Visualization {
         });
     }
 
+    /**
+     * Method for checking weather user set his age.
+     * @return true if age is set or false if not
+     */
     public boolean isAgeSet() {
         if (age == -1) {
             return false;
@@ -132,6 +174,12 @@ public class Visualization {
         return age;
     }
 
+    /**
+     * Method for managing the alarm.
+     * If pulse or SpO2 signals exceed their limits
+     * and the alarm is not paused or deactivated
+     * the alarm is triggered and visualized.
+     */
     public void triggerAlarm() {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -157,6 +205,9 @@ public class Visualization {
         });
     }
 
+    /**
+     * Method for pausing the alarm.
+     */
     public void pauseAlarm() {
         if (alarm.isPaused() && !alarm.isDeactivated()) {
             alarm.setPaused(true);
@@ -175,21 +226,28 @@ public class Visualization {
         }
     }
 
+    /**
+     * Method for generating a file containing the recorded data, alarm and other details.
+     * @return a PrintWriter for writing the output file.
+     */
     public PrintWriter WriteOutputData() {
         try {
-            String FileName = "Output-Data.txt";
-            JFrame parentFrame = new JFrame();
+            String FileName = "Output-Data.txt"; //default path for storing the file
 
+            // open JFileChooser for letting user select a path.
+            JFrame parentFrame = new JFrame();
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle("Specify a file to save");
 
             int userSelection = fileChooser.showSaveDialog(parentFrame);
 
+            // get users selected path and append ".txt" for generating a txt file.
             if (userSelection == JFileChooser.APPROVE_OPTION) {
                 File fileToSave = fileChooser.getSelectedFile();
                 FileName = fileToSave.getAbsolutePath() + ".txt";
             }
 
+            // generate the file
             FileWriter fw = new FileWriter(FileName, true);
             PrintWriter writer = new PrintWriter(fw);
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -233,7 +291,23 @@ public class Visualization {
         return null;
     }
 
+    /**
+     * Show latest data on GUI.
+     * @param pulse signal
+     * @param spO2  signal
+     */
+    private void newData(Short pulse, Short spO2) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                valuePulse.setText(Short.toString(pulse));
+                valueSpo2.setText(Short.toString(spO2));
+            }
+        });
+    }
+
     public static void main(String[] args) {
+
+        // Instantiate the JFrame
         JFrame frame = new JFrame("PulsOxy");
         frame.setPreferredSize(new Dimension(800, 300));
         Visualization visu = new Visualization();
@@ -242,6 +316,7 @@ public class Visualization {
         frame.pack();
         frame.setVisible(true);
 
+        // Connect with sensor
         RandomAccessFile pipe = null;
         try {
             pipe = new RandomAccessFile("\\\\.\\pipe\\ble_host_pipe", "r");
@@ -250,9 +325,9 @@ public class Visualization {
             e.printStackTrace();
         }
         while(true) {
+            // try reading out the data from sensor
             try {
                 String str = pipe.readLine();
-                //System.out.println("Read: " + str);
                 if (str == null)
                 {
                     continue;
@@ -271,34 +346,22 @@ public class Visualization {
                     }
                 }
 
+                // processing the data, see sensors output information for more details
+                // ID 10 for heart rate and SpO2 data
                 if(data.length>=2 && data[1] == 10 && visu.isAgeSet())
                 {
-                    visu.pulse.append(data[4]);
-                    visu.spO2.append(data[5]);
-                    visu.newData(visu.pulse, visu.spO2);
-                    visu.triggerAlarm();
+                    short latestPulse = data[4]; // data[4] contains pulse data
+                    short latestSpO2 = data[5]; // data[5] contains SpO2 data
+                    visu.pulse.append(latestPulse);
+                    visu.spO2.append(latestSpO2);
+                    visu.newData(latestPulse, latestSpO2);
+                    visu.triggerAlarm(); // check the limits and trigger the alarm if needed
                 }
-
-
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
     }
-
-    /*
-    Show the current values of pulse and SpO2
-     */
-    private void newData(Pulse pulse, SpO2 spO2) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                valuePulse.setText(Short.toString(pulse.getLatest()));
-                valueSpo2.setText(Short.toString(spO2.getLatest()));
-            }
-        });
-    }
-
 }

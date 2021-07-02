@@ -7,7 +7,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * SpO2 stores a recorded SpO2 data from a pulseoxymeter.
+ */
 public class SpO2 implements Signal{
+    /**
+     * A list for storing the transmitted SpO2 data.
+     */
     private List<Short> oxygenData;
 
     public SpO2(){
