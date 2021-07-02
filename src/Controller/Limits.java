@@ -7,6 +7,10 @@ public class Limits {
     private static short upperSp02;
     private static short lowerSp02;
 
+    /*
+    Return current values of upper and lower pulse and upper and lower SpO2
+     */
+
     public static short getUpperPulse() {
         return upperPulse;
     }
@@ -22,6 +26,10 @@ public class Limits {
     public static short getLowerSpO2() {
         return lowerSp02;
     }
+
+    /*
+    Initialize the limits of upper / lower pulse depending on the age of the user and of the upper / lower SpO2
+     */
 
     public void initializeLimits(int age) {
         if (age >= 18) {

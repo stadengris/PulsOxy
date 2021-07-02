@@ -92,7 +92,10 @@ public class Visualization {
             }
         });
 
-        /* Controlling if age is set */
+        /*
+        Controlling if age is set:
+        Initialize and show the upper / lower limits of pulse and SpO2
+        */
         tfAge.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -286,6 +289,9 @@ public class Visualization {
 
     }
 
+    /*
+    Show the current values of pulse and SpO2
+     */
     private void newData(Pulse pulse, SpO2 spO2) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
