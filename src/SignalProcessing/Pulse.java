@@ -1,7 +1,5 @@
 package SignalProcessing;
 
-import Controller.Limits;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,7 +17,7 @@ public class Pulse implements Signal{
      * A list for storing the timepoint of the transmitted data.
      */
     private List<String> pulseDate;
-    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
     public Pulse(){
         this.pulseData = new ArrayList<Short>();

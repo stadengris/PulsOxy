@@ -1,7 +1,6 @@
 package Controller;
 
 import SignalProcessing.Pulse;
-import SignalProcessing.Signal;
 import SignalProcessing.SpO2;
 
 /**

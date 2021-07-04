@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PulsOxy:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/PulsOxy_jar</output-path>
+    <root id="archive" name="PulsOxy.jar">
+      <element id="module-output" name="PulsOxy" />
+    </root>
+  </artifact>
+</component>
